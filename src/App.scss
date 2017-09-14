@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,700');
+@import './scss/variables';
+@import './node_modules/bootstrap/scss/bootstrap.scss';
+
+.bg-smoke {
+  background-color: #e8e8e8;
+}
+
+.bg-orange {
+  background-color: $orange;
+}
+
+.bg-red {
+  background-color: $red;
+}
+
+.font-weight-100 {
+  font-weight: 100;
+}
+
+button.close {
+  padding: 1rem;
+}
+
+.no-border {
+  border-color: transparent;
+}
+
+.no-bg {
+  background-color: transparent;
+}
+
+.no-focus {
+  &:focus {
+    border-color: transparent;
+    outline: none;
+  }
+}
+
+.todo-list .completed input {
+  text-decoration: line-through;
+}
+
+.form-control:disabled, 
+.form-control[readonly] {
+  background-color: transparent;
+  color: #999;
+}
+
+.add-todo .form-control {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+

@@ -12,11 +12,11 @@ function TodoList(props) {
       return <Todo 
         key={ item.key }
         classes={ itemClasses }
-        inputValue={ item.value.text }
+        value={ item.text }
         inputName={ item.key }
         onRemove={ () => onRemove(item.key) }
         onComplete={ onComplete }
-        completed={ item.value.completed }
+        completed={ item.completed }
       />   
     })
 

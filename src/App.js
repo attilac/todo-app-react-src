@@ -38,29 +38,24 @@ class App extends Component {
       .orderByChild('date')
       .limitToLast(10)      
       .on('child_added', (snapshot) => {
-        const todos = [...this.state.todos]
-        let todo = {
-          key: snapshot.key,
-          value: snapshot.val()
-        }     
-        //console.log(snapshot.val()) 
+        let todos = [...this.state.todos]
+        const todo = snapshot.val()
+        todo['key'] = snapshot.key   
         todos.push(todo)
+        //console.log(todos)
         console.log('Added todo!')
-        //const todosSorted = utils.sortObjectsByKey(todos, 'year', 'DESC')
-        //console.log(todosSorted)
-        this.setState({ todos: todos })    
-      })  
+        this.setState({ todos: todos })   
+      })
   }
 
   childChanged = () => {
     firebase.database()
       .ref('todos')
-      .orderByChild('date')
       .on('child_changed', (snapshot) => {
         let todos = this.state.todos
           .map( (todo) => {
             return todo.key === snapshot.key ?
-              Object.assign(todo.value, todo, snapshot.val())
+              Object.assign(todo, todo, snapshot.val())
               :
               todo    
           }) 
@@ -84,6 +79,22 @@ class App extends Component {
       }) 
   } 
 
+  createUser = () => {
+    const { email, password } = this.state
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .catch(error => console.log(error)) 
+  }
+
+  loginUser = () => {
+    const { email, password } = this.state
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .catch(error => console.log(error)) 
+  }  
+
   updateCompletedTodo = (id, value) => {
     firebase.database()
       .ref(`/todos/${id}`)
@@ -98,7 +109,7 @@ class App extends Component {
 
   todoOnChange = (event) => {
     const { name, value } = event.target
-    this.setState({[name]: value})   
+    this.setState({ [name]: value})    
   }  
 
   todoOnComplete = (event) => {
@@ -108,12 +119,14 @@ class App extends Component {
   }  
 
   postTodo = () => {
-    if (this.state.todoInput !== '') {
+    const { todoInput } = this.state
+    if (todoInput !== '') {
       const todo = {
-        text: this.state.todoInput,
+        text: todoInput,
         completed: false,
         date: (new Date()).toLocaleString()
-      }  
+      }   
+      this.setState({ todoInput: '' })
 
       firebase.database()
         .ref('todos')
@@ -129,6 +142,8 @@ class App extends Component {
 
   render() {
     const { todos, todoText } = this.state
+    const todosSorted = utils.sortObjectsByKey(todos, 'date', 'DESC')
+    //console.log(todosSorted)
  
     return (
       <div className="App">
@@ -141,7 +156,7 @@ class App extends Component {
             <div className="col-lg-8 push-lg-2">
               <div className="input-group add-todo mb-3">
                 <InputField 
-                  inputValue={ todoText }
+                  value={ todoText }
                   htmlType="text" 
                   classes="form-control"
                   onChange={ this.todoOnChange }
@@ -155,7 +170,7 @@ class App extends Component {
               {
                 todos &&
                 <TodoList 
-                  todos={ todos }
+                  todos={ todosSorted }
                   listClasses="list-group todo-list input-group"
                   itemClasses="list-group-item"
                   onRemove={ this.removeTodo } 

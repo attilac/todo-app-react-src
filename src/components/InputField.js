@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 function InputField(props) {
-  const { onSubmit, onChange, inputValue, placeHolder, classes, htmlType, name, disabled } = props
+  const { onSubmit, onChange, value, placeHolder, classes, htmlType, name, disabled } = props
   return <input 
     type={ htmlType } 
     onKeyPress={ onSubmit }
     onChange={ onChange }
-    value={ inputValue }
+    value={ value }
     className={ classes }
     placeholder={ placeHolder }
     name={ name }
@@ -19,7 +19,7 @@ InputField.propTypes = {
   classes: PropTypes.string,
   disabled: PropTypes.bool,
   htmlType: PropTypes.string.isRequired,
-  inputValue: PropTypes.string,
+  value: PropTypes.string,
   placeHolder: PropTypes.string,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
@@ -29,5 +29,6 @@ InputField.propTypes = {
 InputField.defaultProps = {
   htmlType: 'text'
 }
- export default InputField
+ 
+export default InputField
 

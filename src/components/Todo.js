@@ -3,7 +3,7 @@ import InputField from './InputField.js'
 import PropTypes from 'prop-types'
 
 function Todo(props) {
-  const { onRemove, inputValue, classes, inputName, onComplete, completed } = props,
+  const { onRemove, value, classes, inputName, onComplete, completed } = props,
     completeClass = completed ? 'completed' : ''
   return <div className={ classes + ' ' + completeClass }>
     <span className="input-group-addon no-border no-bg">
@@ -17,7 +17,7 @@ function Todo(props) {
       />
     </span>  
     <InputField 
-      inputValue={ inputValue }
+      value={ value }
       htmlType="text" 
       classes="form-control no-border no-focus"
       name={ inputName }

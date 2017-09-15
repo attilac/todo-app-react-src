@@ -428,7 +428,7 @@ $input-border-radius:            $border-radius !default;
 $input-border-radius-lg:         $border-radius-lg !default;
 $input-border-radius-sm:         $border-radius-sm !default;
 
-$input-bg-focus:                 darken($input-bg, 5%) !default;
+$input-bg-focus:                 $input-bg !default;
 $input-border-focus:             lighten($brand-primary, 45%) !default;
 $input-box-shadow-focus:         $input-box-shadow, rgba($input-border-focus, .6) !default;
 $input-color-focus:              $input-color !default;

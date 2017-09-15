@@ -1503,7 +1503,7 @@ pre {
     border: 0; }
   .form-control:focus {
     color: #464a4c;
-    background-color: #f2f2f2;
+    background-color: #fff;
     border-color: #a8bccf;
     outline: none; }
   .form-control::placeholder {

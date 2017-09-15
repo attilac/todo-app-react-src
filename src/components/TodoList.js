@@ -5,32 +5,18 @@ import PropTypes from 'prop-types'
 
 function TodoList(props) {
   const { todos, itemClasses, listClasses, onRemove, onComplete, completed } = props
-  /*
+  
   let todoList = todos
-  .map(function(item, index) {
-    //console.log(item.value.text)
-    return <Todo 
-      key={ item.key }
-      classes={ itemClasses }
-      inputValue={ item.value.text }
-      inputName={ item.key }
-      onRemove={ () => onRemove(item) }
-      onComplete={ onComplete }
-      completed={ item.value.completed }
-    />   
-  })*/
-
-  let todoList = Object.keys(todos)
     .map(function(item, index) {
-      //console.log(item.value.text)
+      //console.log(item.key)
       return <Todo 
-        key={ item }
+        key={ item.key }
         classes={ itemClasses }
-        inputValue={ todos[item].text }
-        inputName={ item }
-        onRemove={ () => onRemove(item) }
+        inputValue={ item.value.text }
+        inputName={ item.key }
+        onRemove={ () => onRemove(item.key) }
         onComplete={ onComplete }
-        completed={ todos[item].completed }
+        completed={ item.value.completed }
       />   
     })
 

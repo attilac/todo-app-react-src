@@ -38,19 +38,16 @@ class App extends Component {
       .orderByChild('date')
       .limitToLast(10)      
       .on('child_added', (snapshot) => {
-        let todos = {...this.state.todos}
-        /*
-        const todo = {
+        const todos = [...this.state.todos]
+        let todo = {
           key: snapshot.key,
-          value: snapshot.val(),
-        }  
-        todos.push(todo) */
-        todos[snapshot.key] = snapshot.val()
-        //let id = snapshot.key
-        //let todo = {id: snapshot.val()}
-        //Object.assign(todos, todo)
-        //console.log(todos)
+          value: snapshot.val()
+        }     
+        //console.log(snapshot.val()) 
+        todos.push(todo)
         console.log('Added todo!')
+        //const todosSorted = utils.sortObjectsByKey(todos, 'year', 'DESC')
+        //console.log(todosSorted)
         this.setState({ todos: todos })    
       })  
   }
@@ -58,10 +55,16 @@ class App extends Component {
   childChanged = () => {
     firebase.database()
       .ref('todos')
+      .orderByChild('date')
       .on('child_changed', (snapshot) => {
-        let todos = {...this.state.todos}
-        todos[snapshot.key] = snapshot.val()
-        //console.log(todos[snapshot.key])
+        let todos = this.state.todos
+          .map( (todo) => {
+            return todo.key === snapshot.key ?
+              Object.assign(todo.value, todo, snapshot.val())
+              :
+              todo    
+          }) 
+        //console.log(todos)      
         console.log('Updated todo!')
         this.setState({ todos: todos })       
       })     
@@ -72,8 +75,10 @@ class App extends Component {
       .ref('todos')
       .on('child_removed', (snapshot) => {
         //console.log(snapshot.key)
-        let todos = { ...this.state.todos }
-        delete todos[snapshot.key]
+        let todos = [...this.state.todos]
+          .filter( (todo) => {
+            return todo.key !== snapshot.key    
+          })
         console.log('Removed todo')
         this.setState({ todos: todos })
       }) 

@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 function InputField(props) {
-  const { onSubmit, onChange, value, placeHolder, classes, htmlType, name, disabled } = props
+  const { onSubmit, onChange, inputValue, placeHolder, classes, htmlType, name, disabled } = props
   return <input 
     type={ htmlType } 
     onKeyPress={ onSubmit }
     onChange={ onChange }
-    value={ value }
+    value={ inputValue }
     className={ classes }
     placeholder={ placeHolder }
     name={ name }

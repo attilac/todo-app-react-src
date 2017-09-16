@@ -10,7 +10,7 @@ class App extends Component {
 
   state = {
     todos: [],
-    todoInput: ''
+    todoText: ''
   }
 
   componentDidMount() {
@@ -55,11 +55,11 @@ class App extends Component {
         let todos = this.state.todos
           .map( (todo) => {
             return todo.key === snapshot.key ?
-              Object.assign(todo, todo, snapshot.val())
+              Object.assign(todo, snapshot.val())
               :
               todo    
           }) 
-        //console.log(todos)      
+        console.log(todos)      
         console.log('Updated todo!')
         this.setState({ todos: todos })       
       })     
@@ -112,21 +112,21 @@ class App extends Component {
     this.setState({ [name]: value})    
   }  
 
-  todoOnComplete = (event) => {
+  onCheckedCompleted = (event) => {
     const { name, checked, value } = event.target
     //console.log(checked)
     this.updateCompletedTodo(value, checked)
   }  
 
   postTodo = () => {
-    const { todoInput } = this.state
-    if (todoInput !== '') {
+    const { todoText } = this.state
+    if (todoText !== '') {
       const todo = {
-        text: todoInput,
+        text: todoText,
         completed: false,
         date: (new Date()).toLocaleString()
       }   
-      this.setState({ todoInput: '' })
+      this.setState({ todoText: '' })
 
       firebase.database()
         .ref('todos')
@@ -156,12 +156,14 @@ class App extends Component {
             <div className="col-lg-8 push-lg-2">
               <div className="input-group add-todo mb-3">
                 <InputField 
-                  value={ todoText }
                   htmlType="text" 
+                  inputValue={ todoText }
                   classes="form-control"
                   onChange={ this.todoOnChange }
-                  name="todoInput" 
+                  onKeyPress={ () => {} }
+                  name="todoText" 
                   placeHolder="Enter todo here"
+                  disabled={ false }
                 /> 
                 <span className="input-group-btn">
                   <button className="btn btn-info px-4" type="button" onClick={ this.postTodo }>Add</button>
@@ -174,7 +176,7 @@ class App extends Component {
                   listClasses="list-group todo-list input-group"
                   itemClasses="list-group-item"
                   onRemove={ this.removeTodo } 
-                  onComplete={ this.todoOnComplete } 
+                  onComplete={ this.onCheckedCompleted } 
                 />                              
               }  
             </div>  

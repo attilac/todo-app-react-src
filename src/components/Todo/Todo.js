@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import InputField from './InputField.js'
+import InputField from '../InputField/InputField.js'
 import PropTypes from 'prop-types'
 
 function Todo(props) {

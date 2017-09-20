@@ -23,39 +23,39 @@ var utils = (function(movies) {
    * @param {String} key - the property to sort by
    * @return {Array} array - the sorted array
    */
-  var sortObjectsByKey = function(array, key, sortOrder='ASC'){
+  const sortObjectsByKey = function(array, key, sortOrder='ASC'){
     return array
       .sort(function (a, b) {
-        //console.log(isNaN(a[key]));
+        // Sort by value
         if(_isNumber(a[key])){
           if(sortOrder && sortOrder === 'DESC'){
-            return b[key] - a[key];
+            return b[key] - a[key]
           }else{
-            return a[key] - b[key];
+            return a[key] - b[key]
           }
-        }else{
-          var keyA = a[key].toUpperCase(); // ignore upper and lowercase
-          var keyB = b[key].toUpperCase(); // ignore upper and lowercase
-          if(sortOrder && sortOrder === 'DESC'){
+        } else if(typeof a[key] === 'string') { // Sort by characters
+          let keyA = a[key].toUpperCase()
+          let keyB = b[key].toUpperCase() 
+          if(sortOrder && sortOrder === 'DESC') {
             if (keyA < keyB) {
-              return 1;
+              return 1
             }
             if (keyA > keyB) {
-              return -1;
+              return -1
             }
           }else{
             if (keyA < keyB) {
-              return -1;
+              return -1
             }
             if (keyA > keyB) {
-              return 1;
+              return 1
             }         
           }
           // names must be equal
-          return 0;   
+          return 0   
         }
-      });
-  };
+      })
+  }
 
   /**
    * Returns a sorted array

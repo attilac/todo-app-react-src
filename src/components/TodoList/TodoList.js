@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import InputField from './InputField.js'
-import Todo from './Todo.js'
+import Todo from '../Todo/Todo.js'
 import PropTypes from 'prop-types'
 
 function TodoList(props) {

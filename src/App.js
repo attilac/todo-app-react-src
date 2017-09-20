@@ -1,16 +1,32 @@
 import React, { Component } from 'react'
-import InputField from './components/InputField'
-import Todo from './components/Todo.js'
-import TodoList from './components/TodoList.js'
-import './App.css'
+import { CSSTransitionGroup } from 'react-transition-group'
+import { BrowserRouter as Router, Route, Link, Switch, Redirect } from 'react-router-dom'
 import firebase from './firebase.js'
+// Components
+import DropdownSelect from './components/DropdownSelect/DropdownSelect.js'
+import InputField from './components/InputField/InputField.js'
+import LoginForm from './components/LoginForm/LoginForm'
+import LoginPage from './components/LoginPage/LoginPage'
+import PrivateRoute from './components/PrivateRoute/PrivateRoute.js'
+import Spinner from './components/Spinner/Spinner.js'
+import Todo from './components/Todo/Todo.js'
+import TodoList from './components/TodoList/TodoList.js'
+import TodoPage from './components/TodoPage/TodoPage.js'
+import UserDropdown from './components/UserDropdown/UserDropdown.js'
+// Scripts
 import utils from './scripts/utils.js'
+// CSS
+import './fonts/font-awesome-4.7.0/css/font-awesome.min.css'
+import './App.css'
 
 class App extends Component {
 
   state = {
+    errorMessage: '',
     todos: [],
-    todoText: ''
+    todoText: '',
+    user: undefined,
+    username: ''    
   }
 
   componentDidMount() {
@@ -27,10 +43,42 @@ class App extends Component {
       }) 
     */
 
+    firebase
+      .auth()
+      .onAuthStateChanged(user => {
+        if(user) {
+          //const displayName = user.displayName;
+          const email = user.email
+          //const emailVerified = user.emailVerified;
+          //const photoURL = user.photoURL;
+          //const uid = user.uid; //KEY! UID!         
+          this.setState({ 
+            user: user,
+            username: email
+          })
+          console.log(user)
+        } else {
+          this.setState({ 
+            user: user,
+            username: ''
+          })          
+        }
+      })    
+
     this.childAdded()
     this.childChanged()  
     this.childRemoved()           
-  }   
+  }  
+
+  componentWillUnmount() {
+    firebase.database()
+      .ref('todos')
+      .off()  
+
+    firebase
+      .auth()
+      .unsubscribeAuthStateChanged()        
+  }      
 
   childAdded = () => {
     firebase.database()
@@ -42,7 +90,7 @@ class App extends Component {
         const todo = snapshot.val()
         todo['key'] = snapshot.key   
         todos.push(todo)
-        //console.log(todos)
+        console.log(todos)
         console.log('Added todo!')
         this.setState({ todos: todos })   
       })
@@ -95,6 +143,27 @@ class App extends Component {
       .catch(error => console.log(error)) 
   }  
 
+  logOutUser = () => {
+    firebase
+      .auth()
+      .signOut()
+      .catch(error => {
+        console.log(error)
+      }) 
+  }   
+
+  onFormSubmit = (username, password) => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(username, password)
+      .catch(error => {
+        const errorMessage = error.message
+        //const errorCode = error.code
+        this.setState({ errorMessage: errorMessage})
+        console.log(errorMessage)
+      }) 
+  } 
+
   updateCompletedTodo = (id, value) => {
     firebase.database()
       .ref(`/todos/${id}`)
@@ -141,48 +210,72 @@ class App extends Component {
   }   
 
   render() {
-    const { todos, todoText } = this.state
-    const todosSorted = utils.sortObjectsByKey(todos, 'date', 'DESC')
+    const { todos, todoText, user, username, errorMessage } = this.state
+    utils.sortObjectsByKey(todos, 'date', 'DESC')
     //console.log(todosSorted)
  
     return (
-      <div className="App">
-        <nav className="navbar navbar-inverse bg-red">
-          <a className="navbar-brand" href="#">Todo List</a>
-        </nav>
+      <Router> 
+        <div className="App">
+          <nav className="navbar navbar-inverse bg-red navbar-toggleable-sm">
+            <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+            </button>        
+            <Link className="navbar-brand" to="/">Todo List</Link>
+            <div className="collapse navbar-collapse" id="navbarContent">
+              <div className="mr-auto"></div>
+            </div> 
+            <UserDropdown 
+              user={ user }
+              username={ username }
+              logOutUser={ this.logOutUser }
+            />            
+          </nav>
 
-        <div className="container pt-3">
-          <div className="row">
-            <div className="col-lg-8 push-lg-2">
-              <div className="input-group add-todo mb-3">
-                <InputField 
-                  htmlType="text" 
-                  inputValue={ todoText }
-                  classes="form-control"
-                  onChange={ this.todoOnChange }
-                  onKeyPress={ () => {} }
-                  name="todoText" 
-                  placeHolder="Enter todo here"
-                  disabled={ false }
-                /> 
-                <span className="input-group-btn">
-                  <button className="btn btn-info px-4" type="button" onClick={ this.postTodo }>Add</button>
-                </span>
+          <div className="container pt-3">
+            <div className="row">
+              <div className="col-lg-8 push-lg-2">
+                {
+                  user === undefined ?
+                    <Spinner />
+                    :                 
+                    <Switch>
+
+                      <Route path='/login' render={({ match }) => (
+                        user ? (
+                          <Redirect to="/"/>
+                        ) : (
+                          <LoginPage >
+                            <LoginForm 
+                              submitBtnLabel="Log in" 
+                              errorMessage={ errorMessage }
+                              onFormSubmit={ this.onFormSubmit } 
+                              user={ user }
+                            />
+                          </LoginPage> 
+                        )
+                      )}/>   
+
+                      <PrivateRoute
+                        exact 
+                        path="/"
+                        component={ TodoPage }
+                        todos={ todos }
+                        todoOnChange={ this.todoOnChange }
+                        onCheckedCompleted={ this.onCheckedCompleted }
+                        removeTodo={ this.removeTodo }
+                        postTodo={ this.postTodo }
+                        todoText={ todoText }
+                        user={ user }
+                      />  
+                    </Switch>   
+                }
               </div>
-              {
-                todos &&
-                <TodoList 
-                  todos={ todosSorted }
-                  listClasses="list-group todo-list input-group"
-                  itemClasses="list-group-item"
-                  onRemove={ this.removeTodo } 
-                  onComplete={ this.onCheckedCompleted } 
-                />                              
-              }  
-            </div>  
-          </div>  
+            </div>
+          </div>
+              
         </div>
-      </div>
+      </Router>  
     )
   }
 }

@@ -124,10 +124,10 @@ class LoginForm extends Component {
           htmlType="submit" 
           classes="btn-block mt-5" 
           title={ submitBtnLabel } 
-          color="success" 
+          color="primary" 
         />       
       </form>              
-    );
+    )
   }
 }
 
@@ -137,4 +137,4 @@ LoginForm.propTypes = {
   submitBtnLabel: PropTypes.string.isRequired   
 }
 
-export default LoginForm;    
+export default LoginForm  

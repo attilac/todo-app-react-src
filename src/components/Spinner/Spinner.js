@@ -11,4 +11,4 @@ function Spinner(props) {
   )
 }
 
-export default Spinner;
+export default Spinner

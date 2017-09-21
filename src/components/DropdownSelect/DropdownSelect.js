@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'
-import { Dropdown, DropdownToggle } from 'reactstrap';
+import { Dropdown, DropdownToggle } from 'reactstrap'
 
 class DropdownSelect extends Component {
   state = {
@@ -30,13 +30,22 @@ class DropdownSelect extends Component {
     const { caret, title, icon, classes } = this.props,
       { dropdownOpen } = this.state
          
-    return <Dropdown className={ classes } isOpen={ dropdownOpen } toggle={ this.toggle }>
-      <DropdownToggle caret={ caret }>
-        { title !== '' ? title : '' }
-        { icon }
-      </DropdownToggle>
-      { this.renderChildren() }
-    </Dropdown>
+    return (
+      <Dropdown 
+        className={ classes } 
+        isOpen={ dropdownOpen } 
+        toggle={ this.toggle }
+      >
+        <DropdownToggle 
+          caret={ caret }
+          color="danger"
+        >
+          { title !== '' ? title : '' }
+          { icon }
+        </DropdownToggle>
+        { this.renderChildren() }
+      </Dropdown>
+    )
   }  
 }
 

@@ -1,0 +1,24 @@
+.fade-enter {
+  opacity: 0.5;
+  transform: translateY(-50%);
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: all .5s ease-out;
+  transform: translateY(0%);
+  transition-timing-function: ease-out;
+}
+
+.fade-leave {
+  opacity: 1;
+  transform: translateY(0%);
+}
+
+.fade-leave.fade-leave-active {
+  opacity: 0.5;
+  transition: all .5s;
+  transform: scale(0.6, 0.6) translateY(150%) ;
+  transform-origin: center;
+  transition-timing-function: ease-out;
+}

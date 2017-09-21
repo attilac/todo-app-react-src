@@ -1,16 +1,13 @@
 import React, { Component } from 'react'
-import { CSSTransitionGroup } from 'react-transition-group'
 import { BrowserRouter as Router, Route, Link, Switch, Redirect } from 'react-router-dom'
 import firebase from './firebase.js'
+import { Navbar } from 'reactstrap'
 // Components
-import DropdownSelect from './components/DropdownSelect/DropdownSelect.js'
-import InputField from './components/InputField/InputField.js'
+
 import LoginForm from './components/LoginForm/LoginForm'
 import LoginPage from './components/LoginPage/LoginPage'
 import PrivateRoute from './components/PrivateRoute/PrivateRoute.js'
 import Spinner from './components/Spinner/Spinner.js'
-import Todo from './components/Todo/Todo.js'
-import TodoList from './components/TodoList/TodoList.js'
 import TodoPage from './components/TodoPage/TodoPage.js'
 import UserDropdown from './components/UserDropdown/UserDropdown.js'
 // Scripts
@@ -23,6 +20,7 @@ class App extends Component {
 
   state = {
     errorMessage: '',
+    collapsed: true,
     todos: [],
     todoText: '',
     user: undefined,
@@ -90,7 +88,7 @@ class App extends Component {
         const todo = snapshot.val()
         todo['key'] = snapshot.key   
         todos.push(todo)
-        console.log(todos)
+        //console.log(todos)
         console.log('Added todo!')
         this.setState({ todos: todos })   
       })
@@ -107,7 +105,7 @@ class App extends Component {
               :
               todo    
           }) 
-        console.log(todos)      
+        //console.log(todos)      
         console.log('Updated todo!')
         this.setState({ todos: todos })       
       })     
@@ -182,7 +180,7 @@ class App extends Component {
   }  
 
   onCheckedCompleted = (event) => {
-    const { name, checked, value } = event.target
+    const { checked, value } = event.target
     //console.log(checked)
     this.updateCompletedTodo(value, checked)
   }  
@@ -207,7 +205,17 @@ class App extends Component {
           console.log('There was an error', error) 
         })                
     }    
-  }   
+  } 
+
+  todoOnEnter = (event) => {
+    if(event.key === 'Enter') {
+      this.postTodo() 
+    }
+  } 
+
+  toggleNavbar = () => {
+    this.setState({ collapsed: !this.state.collapsed })
+  } 
 
   render() {
     const { todos, todoText, user, username, errorMessage } = this.state
@@ -217,61 +225,59 @@ class App extends Component {
     return (
       <Router> 
         <div className="App">
-          <nav className="navbar navbar-inverse bg-red navbar-toggleable-sm">
-            <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button>        
+
+          <Navbar 
+            color="red" 
+            inverse 
+            toggleable
+            className="flex-row"
+          >
             <Link className="navbar-brand" to="/">Todo List</Link>
-            <div className="collapse navbar-collapse" id="navbarContent">
-              <div className="mr-auto"></div>
-            </div> 
+            <div className="mr-auto"></div>
             <UserDropdown 
               user={ user }
               username={ username }
               logOutUser={ this.logOutUser }
-            />            
-          </nav>
+            />          
+          </Navbar>
 
           <div className="container pt-3">
-            <div className="row">
-              <div className="col-lg-8 push-lg-2">
-                {
-                  user === undefined ?
-                    <Spinner />
-                    :                 
-                    <Switch>
+            {
+              user === undefined ?
+                <Spinner />
+                :                 
+                <Switch>
 
-                      <Route path='/login' render={({ match }) => (
-                        user ? (
-                          <Redirect to="/"/>
-                        ) : (
-                          <LoginPage >
-                            <LoginForm 
-                              submitBtnLabel="Log in" 
-                              errorMessage={ errorMessage }
-                              onFormSubmit={ this.onFormSubmit } 
-                              user={ user }
-                            />
-                          </LoginPage> 
-                        )
-                      )}/>   
+                  <Route path='/login' render={({ match }) => (
+                    user ? (
+                      <Redirect to="/"/>
+                    ) : (
+                      <LoginPage >
+                        <LoginForm 
+                          submitBtnLabel="Log in" 
+                          errorMessage={ errorMessage }
+                          onFormSubmit={ this.onFormSubmit } 
+                          user={ user }
+                        />
+                      </LoginPage> 
+                    )
+                  )}/>   
 
-                      <PrivateRoute
-                        exact 
-                        path="/"
-                        component={ TodoPage }
-                        todos={ todos }
-                        todoOnChange={ this.todoOnChange }
-                        onCheckedCompleted={ this.onCheckedCompleted }
-                        removeTodo={ this.removeTodo }
-                        postTodo={ this.postTodo }
-                        todoText={ todoText }
-                        user={ user }
-                      />  
-                    </Switch>   
-                }
-              </div>
-            </div>
+                  <PrivateRoute
+                    exact 
+                    path="/"
+                    component={ TodoPage }
+                    todos={ todos }
+                    todoOnChange={ this.todoOnChange }
+                    onKeyPress={ this.todoOnEnter }
+                    onCheckedCompleted={ this.onCheckedCompleted }
+                    removeTodo={ this.removeTodo }
+                    postTodo={ this.postTodo }
+                    todoText={ todoText }
+                    user={ user }
+                  />  
+                </Switch>   
+            }
           </div>
               
         </div>

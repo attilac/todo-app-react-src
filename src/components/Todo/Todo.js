@@ -19,7 +19,7 @@ function Todo(props) {
     <InputField 
       inputValue={ inputValue }
       htmlType="text" 
-      classes="form-control no-border no-focus"
+      classes="form-control no-border no-focus font-weight-100 font-size-lg" 
       name={ inputName }
       onChange={ () => {} }
       disabled={ completed }

@@ -223,7 +223,7 @@ class App extends Component {
     //console.log(todosSorted)
  
     return (
-      <Router> 
+      <Router basename="/todo-app-react"> 
         <div className="App">
 
           <Navbar 
